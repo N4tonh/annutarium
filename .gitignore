@@ -1,0 +1,15 @@
+# Entornos y Nix
+.direnv/
+result
+flake.nix
+flake.lock
+annutarium-phase1-implementation-plan.md
+
+# Node (por si acaso a futuro)
+node_modules/
+
+# Archivos de SO y Editores
+.DS_Store
+.vscode/
+.cursorrules
+.cursor/
