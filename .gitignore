@@ -1,8 +1,6 @@
 # Entornos y Nix
 .direnv/
 result
-flake.nix
-flake.lock
 annutarium-phase1-implementation-plan.md
 
 # Node (por si acaso a futuro)
