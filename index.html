@@ -13,7 +13,41 @@
     <div id="panesContainer" class="flex overflow-x-auto overflow-y-hidden scroll-snap-x mandatory p-4 space-x-2">
         <!-- Explorer Panel -->
         <div id="explorerPanel" class="flex-shrink-0 w-[50vw] min-w-[200px] bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-md scroll-snap-start flex flex-col overflow-hidden transition-all duration-150">
-            <!-- Panel content will go here -->
+            <!-- File Explorer Structure -->
+            <div class="flex flex-col h-full">
+                <header class="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <h2 class="text-lg font-semibold">Explorer</h2>
+                        <!-- Global Controls -->
+                        <button id="expandCollapseAllBtn" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-xs rounded flex items-center space-x-1" title="Expandir/Colapsar todo">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        <!-- TODO: Phase 3 - AI Reorganization Button -->
+                        <button id="aiReorgBtn" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-xs rounded flex items-center space-x-1 opacity-50" title="Reorganización por temas (Fase 3)" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M6 12a6 6 0 100-12 6 6 0 000 12z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="newFileBtn" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-xs rounded" title="New File">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                        <button id="newFolderBtn" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-xs rounded" title="New Folder">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20h10M12 4v16" />
+                            </svg>
+                        </button>
+                    </div>
+                </header>
+                <div id="fileList" class="flex-1 overflow-y-auto p-2 space-y-1">
+                    <!-- File items will be inserted here -->
+                </div>
+            </div>
         </div>
         <!-- Editor Panel -->
         <div id="editorPanel" class="flex-shrink-0 w-[50vw] min-w-[200px] bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-md scroll-snap-start flex flex-col overflow-hidden transition-all duration-150">
