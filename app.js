@@ -26,11 +26,13 @@ class AnnutariumApp {
                 await this.loadFileExplorer();
                 this.setupSlidingPanes();
                 this.setupFileExplorerEvents();
+                this.setupEditor();
             } else {
                 this.showAuthButton();
                 // Still setup sliding panes for UI structure
                 this.setupSlidingPanes();
                 this.setupFileExplorerEvents();
+                this.setupEditor();
             }
         } catch (error) {
             console.error('Auth check failed:', error);
@@ -38,6 +40,7 @@ class AnnutariumApp {
             // Still setup sliding panes for UI structure
             this.setupSlidingPanes();
             this.setupFileExplorerEvents();
+            this.setupEditor();
         }
     }
 
@@ -616,5 +619,100 @@ class AnnutariumApp {
     createFolder(folderPath) {
         // Implementation would go here
         puter.ui.alert('Create folder functionality coming soon!');
+    }
+
+    // Editor Initialization and Event Handling
+    setupEditor() {
+        this.editorElement = document.getElementById('editor');
+        this.previewContainer = document.getElementById('previewContainer');
+        this.previewToggle = document.getElementById('previewToggle');
+        this.fileTitle = document.getElementById('fileTitle');
+        this.saveBtn = document.getElementById('saveBtn');
+        
+        // Set initial content
+        if (this.state.file.content) {
+            this.editorElement.value = this.state.file.content;
+            this.updatePreview();
+        }
+        
+        // Editor input with debounce for auto-save
+        this.editorElement.addEventListener('input', (e) => {
+            this.state.file.content = e.target.value;
+            clearTimeout(this.state.editor.debounceTimer);
+            this.state.editor.debounceTimer = setTimeout(() => {
+                this.saveFile();
+            }, 2000); // 2 second debounce
+            
+            // Update preview in real-time (or with a shorter debounce for performance)
+            clearTimeout(this.previewDebounceTimer);
+            this.previewDebounceTimer = setTimeout(() => {
+                this.updatePreview();
+            }, 300);
+        });
+        
+        // Preview toggle
+        this.previewToggle.addEventListener('click', () => {
+            this.previewContainer.classList.toggle('hidden');
+            this.editorElement.classList.toggle('flex-1');
+            this.editorElement.classList.toggle('w-full');
+            // When showing preview, editor takes half space; when hiding, editor takes full
+            if (this.previewContainer.classList.contains('hidden')) {
+                this.editorElement.classList.remove('w-1/2');
+                this.editorElement.classList.add('flex-1');
+            } else {
+                this.editorElement.classList.remove('flex-1');
+                this.editorElement.classList.add('w-1/2');
+            }
+        });
+        
+        // Save button
+        this.saveBtn.addEventListener('click', () => {
+            this.saveFile();
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+S to save
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                this.saveFile();
+            }
+            // Ctrl+N for new file (handled in file explorer)
+            // Alt for radial menu (handled separately)
+        });
+    }
+
+    async saveFile() {
+        if (!this.state.file.currentPath) {
+            // If no file is open, we might want to prompt for a name
+            // For now, we'll just return or show a message
+            return;
+        }
+        
+        try {
+            await puter.fs.write(this.state.file.currentPath, this.state.file.content);
+            // Update UI to show saved status
+            this.saveBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+            setTimeout(() => {
+                this.saveBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21H5a2 2 0 012-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" /></svg>';
+            }, 2000);
+        } catch (error) {
+            console.error('Failed to save file:', error);
+            puter.ui.alert('Could not save file');
+        }
+    }
+
+    updatePreview() {
+        if (this.previewContainer.classList.contains('hidden')) {
+            return; // Don't update if hidden
+        }
+        
+        try {
+            const html = this.markdownIt.render(this.state.file.content);
+            this.previewContainer.innerHTML = html;
+        } catch (error) {
+            console.error('Failed to render markdown:', error);
+            this.previewContainer.innerHTML = `<p class="text-red-400">Error rendering preview</p>`;
+        }
     }
 }

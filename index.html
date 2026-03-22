@@ -51,7 +51,33 @@
         </div>
         <!-- Editor Panel -->
         <div id="editorPanel" class="flex-shrink-0 w-[50vw] min-w-[200px] bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-md scroll-snap-start flex flex-col overflow-hidden transition-all duration-150">
-            <!-- Panel content will go here -->
+            <!-- Editor Panel Structure -->
+            <div class="flex flex-col h-full">
+                <header class="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
+                    <h2 class="text-lg font-semibold" id="fileTitle">Editor</h2>
+                    <div class="flex space-x-2">
+                        <button id="saveBtn" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-xs rounded" title="Save (Ctrl+S)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                            </svg>
+                        </button>
+                        <button id="previewToggle" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-xs rounded" title="Toggle Preview">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                </header>
+                <div class="flex-1 overflow-hidden">
+                    <div id="editorContainer" class="flex-1 p-4">
+                        <textarea id="editor" class="w-full h-full bg-gray-800/50 border-none text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-0" 
+                                  placeholder="Start writing..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+                    </div>
+                    <div id="previewContainer" class="hidden p-4 overflow-y-auto prose prose-sm text-gray-300">
+                        <!-- Markdown preview will be rendered here -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script src="app.js" defer></script>
