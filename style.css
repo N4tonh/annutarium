@@ -37,3 +37,18 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
 }
+
+/* Mobile responsiveness for sliding panes */
+@media (max-width: 640px) {
+    #panesContainer {
+        overflow-x: hidden; /* Disable horizontal scroll on mobile, we'll use JS for swiping */
+    }
+    #explorerPanel, #editorPanel {
+        width: 100vw !important;
+        min-width: unset !important;
+        transform: translateX(0);
+        transition: transform 0.15s ease-in-out;
+        /* Performance note: Using transform for GPU acceleration */
+    }
+    /* We'll use JS to set translateX(-100vw) for second panel on mobile */
+}

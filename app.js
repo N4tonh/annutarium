@@ -24,12 +24,17 @@ class AnnutariumApp {
                 this.state.auth.user = user;
                 this.state.auth.signedIn = true;
                 await this.loadFileExplorer();
+                this.setupSlidingPanes();
             } else {
                 this.showAuthButton();
+                // Still setup sliding panes for UI structure
+                this.setupSlidingPanes();
             }
         } catch (error) {
             console.error('Auth check failed:', error);
             this.showAuthButton();
+            // Still setup sliding panes for UI structure
+            this.setupSlidingPanes();
         }
     }
 
@@ -71,6 +76,83 @@ class AnnutariumApp {
             puter.ui.alert('Failed to get user data');
             return null;
         }
+    }
+    
+    // Sliding panes methods
+    setupSlidingPanes() {
+        this.panesContainer = document.getElementById('panesContainer');
+        this.explorerPanel = document.getElementById('explorerPanel');
+        this.editorPanel = document.getElementById('editorPanel');
+        
+        // Set initial state
+        this.updatePanelVisibility();
+        
+        // Setup scroll snapping for desktop
+        this.panesContainer.addEventListener('scroll', (e) => {
+            const scrollLeft = e.target.scrollLeft;
+            const panelWidth = this.explorerPanel.offsetWidth;
+            this.state.ui.activePanel = Math.round(scrollLeft / panelWidth);
+            this.updatePanelVisibility();
+        });
+        
+        // Setup touch gestures for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        this.panesContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        
+        this.panesContainer.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            this.handleSwipe();
+        }, { passive: true });
+    }
+
+    handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // Swiped left -> next panel
+                this.nextPanel();
+            } else {
+                // Swiped right -> previous panel
+                this.prevPanel();
+            }
+        }
+    }
+
+    nextPanel() {
+        if (this.state.ui.activePanel < 1) { // Assuming 2 panels (0 and 1)
+            this.state.ui.activePanel++;
+            this.updatePanelVisibility();
+            this.panesContainer.scrollTo({
+                left: this.state.ui.activePanel * this.explorerPanel.offsetWidth,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    prevPanel() {
+        if (this.state.ui.activePanel > 0) {
+            this.state.ui.activePanel--;
+            this.updatePanelVisibility();
+            this.panesContainer.scrollTo({
+                left: this.state.ui.activePanel * this.explorerPanel.offsetWidth,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    updatePanelVisibility() {
+        // For mobile, we use transform to hide/show panels
+        if (window.innerWidth < 640) {
+            const offset = -this.state.ui.activePanel * 100;
+            this.panesContainer.style.transform = `translateX(${offset}vw)`;
+        }
+        // On desktop, scroll snapping handles visibility, but we can still update active state for UI
     }
     
     // Render method to update UI based on state

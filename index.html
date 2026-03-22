@@ -10,7 +10,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-900 text-gray-100 flex h-screen overflow-hidden">
-    <!-- Sliding panes container will go here -->
+    <div id="panesContainer" class="flex overflow-x-auto overflow-y-hidden scroll-snap-x mandatory p-4 space-x-2">
+        <!-- Explorer Panel -->
+        <div id="explorerPanel" class="flex-shrink-0 w-[50vw] min-w-[200px] bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-md scroll-snap-start flex flex-col overflow-hidden transition-all duration-150">
+            <!-- Panel content will go here -->
+        </div>
+        <!-- Editor Panel -->
+        <div id="editorPanel" class="flex-shrink-0 w-[50vw] min-w-[200px] bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-md scroll-snap-start flex flex-col overflow-hidden transition-all duration-150">
+            <!-- Panel content will go here -->
+        </div>
+    </div>
     <script src="app.js" defer></script>
     <script>
         // Initialize the app when DOM is loaded
