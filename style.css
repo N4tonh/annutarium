@@ -52,3 +52,22 @@ body {
     }
     /* We'll use JS to set translateX(-100vw) for second panel on mobile */
 }
+
+/* Radial menu styles */
+#radialMenu {
+    backdrop-filter: blur(4px);
+    background-color: rgba(15, 15, 17, 0.5);
+}
+#radialMenuContent {
+    @apply opacity-0 transition-opacity duration-200;
+    transform: translate(-50%, -50%);
+}
+/* Optional: add a subtle pulse animation when showing */
+@keyframes pulse {
+    0% { transform: scale(0.95) translate(-50%, -50%); opacity: 0.8; }
+    50% { transform: scale(1.05) translate(-50%, -50%); opacity: 1; }
+    100% { transform: scale(1) translate(-50%, -50%); opacity: 1; }
+}
+#radialMenuContent.show-animation {
+    animation: pulse 0.3s ease-out;
+}

@@ -27,12 +27,14 @@ class AnnutariumApp {
                 this.setupSlidingPanes();
                 this.setupFileExplorerEvents();
                 this.setupEditor();
+                this.setupRadialMenu();
             } else {
                 this.showAuthButton();
                 // Still setup sliding panes for UI structure
                 this.setupSlidingPanes();
                 this.setupFileExplorerEvents();
                 this.setupEditor();
+                this.setupRadialMenu();
             }
         } catch (error) {
             console.error('Auth check failed:', error);
@@ -41,6 +43,7 @@ class AnnutariumApp {
             this.setupSlidingPanes();
             this.setupFileExplorerEvents();
             this.setupEditor();
+            this.setupRadialMenu();
         }
     }
 
@@ -714,5 +717,101 @@ class AnnutariumApp {
             console.error('Failed to render markdown:', error);
             this.previewContainer.innerHTML = `<p class="text-red-400">Error rendering preview</p>`;
         }
+    }
+
+    // Radial Menu System
+    setupRadialMenu() {
+        this.radialMenu = document.getElementById('radialMenu');
+        this.radialMenuContent = document.getElementById('radialMenuContent');
+        
+        // Event listeners for Alt key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Alt' || e.key === 'AltGraph') {
+                e.preventDefault(); // Prevent browser menu from opening
+                this.showRadialMenu(e.clientX, e.clientY);
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Alt' || e.key === 'AltGraph') {
+                this.hideRadialMenu();
+            }
+        });
+        
+        // For touch devices: long press to show menu
+        let touchStartTime = 0;
+        const LONG_PRESS_THRESHOLD = 500; // ms
+        
+        document.addEventListener('touchstart', (e) => {
+            touchStartTime = Date.now();
+        }, { passive: true });
+        
+        document.addEventListener('touchend', (e) => {
+            const touchDuration = Date.now() - touchStartTime;
+            if (touchDuration >= LONG_PRESS_THRESHOLD) {
+                const touch = e.changedTouches[0];
+                this.showRadialMenu(touch.clientX, touch.clientY);
+            }
+        }, { passive: true });
+        
+        // Add click handlers to static menu items
+        document.getElementById('menuExplorer').addEventListener('click', () => {
+            this.switchToPanel(0);
+            this.hideRadialMenu();
+        });
+        
+        document.getElementById('menuEditor').addEventListener('click', () => {
+            this.switchToPanel(1);
+            this.hideRadialMenu();
+        });
+        
+        document.getElementById('menuNewFile').addEventListener('click', () => {
+            this.promptForNewFile();
+            this.hideRadialMenu();
+        });
+        
+        document.getElementById('menuNewFolder').addEventListener('click', () => {
+            this.promptForNewFolder();
+            this.hideRadialMenu();
+        });
+        
+        document.getElementById('menuSettings').addEventListener('click', () => {
+            this.openSettings();
+            this.hideRadialMenu();
+        });
+    }
+    
+    showRadialMenu(x, y) {
+        this.radialMenu.classList.remove('hidden');
+        // Position the menu content under the cursor/finger (centered on the point)
+        this.radialMenuContent.style.transform = `translate(${x}px, ${y}px)`;
+        // Add a slight delay to allow for CSS transition
+        requestAnimationFrame(() => {
+            this.radialMenuContent.classList.add('opacity-100');
+            this.radialMenuContent.classList.remove('opacity-0');
+        });
+    }
+    
+    hideRadialMenu() {
+        this.radialMenuContent.classList.add('opacity-0');
+        this.radialMenuContent.classList.remove('opacity-100');
+        // Wait for transition to end before hiding
+        setTimeout(() => {
+            this.radialMenu.classList.add('hidden');
+        }, 200);
+    }
+    
+    switchToPanel(panelIndex) {
+        this.state.ui.activePanel = panelIndex;
+        this.updatePanelVisibility();
+        this.panesContainer.scrollTo({
+            left: this.state.ui.activePanel * this.explorerPanel.offsetWidth,
+            behavior: 'smooth'
+        });
+    }
+    
+    openSettings() {
+        // Placeholder for settings functionality
+        alert('Settings panel coming soon!');
     }
 }
